@@ -2,7 +2,7 @@ version: '3'
 services:
   backend:
     build:
-      context: ./backend  # Path to your Django backend Dockerfile
+      context: ./backend
     ports:
       - "8000:8000"
     volumes:
@@ -11,7 +11,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend  # Path to your React frontend Dockerfile
+      context: ./frontend
     ports:
       - "3000:3000"
     volumes:
