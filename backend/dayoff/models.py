@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from multiselectfield import MultiSelectField
+
 
 annual = 'annual'
 bounce = 'bounce'
@@ -22,12 +24,14 @@ LEAVE_STATUSES = (
     (declined, ('Declined')),
 )
 
+
 class Users(AbstractUser):
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(unique=True, null=True)
     bio = models.TextField(null=True)
     avatar = models.ImageField(null=True, blank=True, upload_to="images/")
-    
+    team = models.ManyToManyField('self', blank=True, null=True, related_name='selected_by_users')
+    editable = models.BooleanField(default=False, null=True)
     # USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 

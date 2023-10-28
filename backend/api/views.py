@@ -4,9 +4,9 @@ from dayoff.models import DayOff, Users
 from .serializers import DayOffSerializer, UsersSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from drf_yasg.utils import swagger_auto_schema
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -24,13 +24,27 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
  
 @api_view(['GET'])
+def getApi(request):
+    urls = ['one', 'tow']
+    
+    return Response(urls)
+ 
+@api_view(['GET'])
 def getUsers(request):
-    user = Users.objects.all()
-    serializer = UsersSerializer(user,many=True)
+    users = Users.objects.all()
+    admin_team = [item.name for item in request.user.team.all()]
+    
+    for user in users:
+        if user.name in admin_team:
+            user.editable = True
+            
+    serializer = UsersSerializer(users,many=True)
     return Response(serializer.data)   
 
-@api_view(['GET', 'POST'])
+
+@swagger_auto_schema(methods=['GET','POST'], operation_summary="Retrieve some data", operation_description="Retrieve data with authentication required.", security=[{"Bearer Token": []}])
 @permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST'])
 def getDaysOff(request):
     if request.method == 'GET':
         user = request.user
@@ -44,15 +58,17 @@ def getDaysOff(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@swagger_auto_schema(methods=['GET'], operation_summary="Retrieve some data", operation_description="Retrieve data with authentication required.", security=[{"Bearer Token": []}])
 @permission_classes([IsAuthenticated])
+@api_view(['GET'])
 def getDayOff(request, pk):
     dayoff = DayOff.objects.get(id=pk)
     serializer = DayOffSerializer(dayoff,many=False)
     return Response(serializer.data)
 
-@api_view(['DELETE'])
+@swagger_auto_schema(methods=['DELETE'], operation_summary="Retrieve some data", operation_description="Retrieve data with authentication required.", security=[{"Bearer Token": []}])
 @permission_classes([IsAuthenticated])
+@api_view(['DELETE'])
 def deleteDayOff(request, pk):
     try:
         dayoff = DayOff.objects.get(id=pk)
@@ -64,8 +80,9 @@ def deleteDayOff(request, pk):
         
     return Response("Izin basaliyla silindi")
 
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['PUT'], operation_summary="Retrieve some data", operation_description="Retrieve data with authentication required.", security=[{"Bearer Token": []}])
 @permission_classes([IsAuthenticated])
+@api_view(['PUT'])
 def updateDayOff(request, pk):
     try:
         instance = DayOff.objects.get(id=pk)

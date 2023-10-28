@@ -40,8 +40,19 @@ function Default() {
     getDaysOff();
     // deleteDayOff();
     // createDayoff();
-    updateDayoff();
+    // updateDayoff();
+    getUsers();
   }, [])
+
+  // GET users
+  const getUsers = async ()=>{
+    try {
+      const response = await api.get('users/')
+      console.log(response.data)
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   // GET days off
   const getDaysOff = async () => {

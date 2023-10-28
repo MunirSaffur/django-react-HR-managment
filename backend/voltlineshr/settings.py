@@ -41,8 +41,20 @@ INSTALLED_APPS = [
     'dayoff',
     'rest_framework',
     'corsheaders',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_swagger',
+    'drf_yasg'
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        "Bearer Token": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+    },
+}
 
 AUTH_USER_MODEL = 'dayoff.Users'
 
@@ -107,7 +119,7 @@ ROOT_URLCONF = 'voltlineshr.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'tamplate')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
